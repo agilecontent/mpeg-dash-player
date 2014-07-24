@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script type="text/javascript">
+    // Log messages to stdio console. This avoids having to load developer tools in
+    // debug builds, which is painfully slow.
+    var LOG_CONSOLE=true;
+
+    var start_time = Date.now();
+
+    function log() {
+      if (!LOG_CONSOLE)
+        console.log.apply(console, arguments);
+
+      var t = Math.round(Date.now() - start_time);
+      var vals = [];
+      for (var i = 0; i < arguments.length; i++) {
+        var v = '' + arguments[i];
+        if (v.slice(0, 4) == '[obj') continue;
+        vals.push(v);
+      }
+      var msg = t + ': ' + vals.join(', ');
+      var box = document.getElementById('console');
+      if (box) box.value += msg + '\n';
+      if (LOG_CONSOLE) console.log(msg);
+    }
+    window.log = log;
+
+    // TODO(strobe): Add on-page verbosity level control
+    var DLOG_LEVEL=4;
+
+    function dlog(level) {
+      if (level <= DLOG_LEVEL) {
+        log.apply(null, arguments);
+      }
+    }
+    window.dlog = dlog;
+  </script>
+  <script type="text/javascript" src="dash-manifest.js"></script>
+  <script type="text/javascript" src="dash-eme.js"></script>
+  <script type="text/javascript" src="segmentindex.js"></script>
+  <script type="text/javascript" src="media-source-portability.js"></script>
+  <style type="text/css" media="screen">
+    #url {
+      padding:5px 8px;
+      width:600px;
+    }
+    video {
+      width:800px;
+      height:450px;
+    }
+  </style>
+  </head>
+<body>
+  <div class="container">
+    <form>
+      <label for="url">Url</label><input type="text" name="url" value="http://yt-dash-mse-test.commondatastorage.googleapis.com/media/oops_cenc-20121114-signedlicenseurl-manifest.mpd" id="url">
+    </form>
+    <form id="repform">Representations:<select><option value="0">33k</option><option value="1">130k</option><option value="2">258k</option></select><select><option value="0">283k</option><option value="1">973k</option><option value="2">1158k</option><option value="3">101k</option><option value="4">3009k</option><option value="5">6021k</option></select></form>
+    <button onclick="window.init(); return false;">Play</button>
+    <br />
+    <video id="videoTag" controls=""></video>
+  </div>
+  <script type="text/javascript" src="player-uux.js"></script>
+</body>
+</html>
